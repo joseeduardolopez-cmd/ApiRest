@@ -41,15 +41,15 @@
     </select>
 
     <div class="buttons">
-        <button onclick="create()">Guardar</button>
-        <button onclick="update()">Actualizar</button>
+        <button id="btnGuardar">Guardar</button>
+        <button id="btnActualizar">Actualizar</button>
     </div>
 
     <h3>Lista de dispositivos</h3>
 
-    <input type="text" id="buscador" placeholder="🔍 Buscar..." onkeyup="filtrar()">
+    <input type="text" id="buscador" placeholder="🔍 Buscar...">
 
-    <!-- 🔥 CONTENEDOR RESPONSIVE -->
+    <!-- Tabla responsive -->
     <div class="table-container">
         <table>
             <thead>
@@ -71,5 +71,17 @@
 </div>
 
 <script src="script.js"></script>
+
+<!-- 🔥 Eventos compatibles con celular -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("btnGuardar").addEventListener("click", create);
+    document.getElementById("btnActualizar").addEventListener("click", update);
+
+    // Buscador en tiempo real
+    document.getElementById("buscador").addEventListener("input", filtrar);
+});
+</script>
+
 </body>
 </html>
