@@ -169,3 +169,8 @@ select {
 .table-container {
     overflow-x: auto;
 }
+
+.table-container {
+    overflow-x: auto;
+    border-radius: 10px;
+}
