@@ -15,18 +15,15 @@
 
     <input type="text" id="nombre" placeholder="Nombre">
 
-    
     <select id="tipo">
         <option value="">Selecciona Tipo</option>
         <option value="Laptop">Laptop</option>
         <option value="PC">PC</option>
         <option value="Impresora">Impresora</option>
         <option value="Monitor">Monitor</option>  
-        <option value="Monitor">Celular</option>  
-        
+        <option value="Celular">Celular</option>  
     </select>
 
-    
     <select id="estado">
         <option value="">Selecciona Estado</option>
         <option value="Activo">Activo</option>
@@ -34,7 +31,6 @@
         <option value="Baja">Baja</option>
     </select>
 
-   
     <select id="area">
         <option value="">Selecciona Área</option>
         <option value="Sistemas">Sistemas</option>
@@ -44,7 +40,6 @@
         <option value="Operaciones">Operaciones</option>
     </select>
 
-
     <div class="buttons">
         <button onclick="create()">Guardar</button>
         <button onclick="update()">Actualizar</button>
@@ -53,21 +48,26 @@
     <h3>Lista de dispositivos</h3>
 
     <input type="text" id="buscador" placeholder="🔍 Buscar..." onkeyup="filtrar()">
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Tipo</th>
-                <th>Estado</th>
-                <th>Área</th>
-                <th>Fecha</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody id="tabla">
-        </tbody>
-    </table>
+
+    <!-- 🔥 CONTENEDOR RESPONSIVE -->
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Tipo</th>
+                    <th>Estado</th>
+                    <th>Área</th>
+                    <th>Fecha</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tabla">
+            </tbody>
+        </table>
+    </div>
+
 </div>
 
 <script src="script.js"></script>
