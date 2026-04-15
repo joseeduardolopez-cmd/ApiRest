@@ -164,4 +164,8 @@ select {
     th, td {
         padding: 6px;
     }
+
+
+.table-container {
+    overflow-x: auto;
 }
