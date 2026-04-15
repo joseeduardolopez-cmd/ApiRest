@@ -165,10 +165,65 @@ select {
         padding: 6px;
     }
 
-
+/* Contenedor de tabla */
 .table-container {
+    width: 100%;
     overflow-x: auto;
+    margin-top: 10px;
 }
+
+/* Tabla */
+table {
+    width: 100%;
+    min-width: 700px; /* 👈 evita que se aplaste demasiado */
+    border-collapse: collapse;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* Celdas */
+th, td {
+    padding: 10px;
+    text-align: center;
+    white-space: nowrap; /* 👈 evita que el texto rompa la tabla */
+}
+
+/* Encabezado */
+th {
+    background: #667eea;
+    color: white;
+}
+
+/* Filas */
+tr:nth-child(even) {
+    background: #f4f6fb;
+}
+
+tr:hover {
+    background: #e2e8f0;
+}
+
+    .container {
+    width: 90%;
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    box-sizing: border-box; /* 👈 IMPORTANTÍSIMO */
+}
+
+    @media (max-width: 768px) {
+
+    table {
+        min-width: 600px; /* 👈 permite scroll en vez de romperse */
+    }
+
+    th, td {
+        font-size: 12px;
+        padding: 6px;
+    }
+
+}
+
 
 .table-container {
     overflow-x: auto;
