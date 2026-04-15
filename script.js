@@ -1,7 +1,17 @@
 const base = "/devices";
 
-// Cargar tabla al iniciar
-window.onload = getAll;
+// 🔥 Cargar al iniciar (mejor que window.onload)
+document.addEventListener("DOMContentLoaded", () => {
+    getAll();
+
+    // Eventos botones (mobile friendly)
+    document.getElementById("btnGuardar").addEventListener("click", create);
+    document.getElementById("btnActualizar").addEventListener("click", update);
+
+    // Buscador en tiempo real
+    document.getElementById("buscador").addEventListener("input", filtrar);
+});
+
 
 // 🔹 Obtener todos
 function getAll() {
@@ -12,23 +22,30 @@ function getAll() {
         tabla.innerHTML = "";
 
         data.forEach(d => {
-            tabla.innerHTML += `
-                <tr>
-                    <td>${d.id}</td>
-                    <td>${d.nombre}</td>
-                    <td>${d.tipo}</td>
-                    <td>${d.estado}</td>
-                    <td>${d.area}</td>
-                    <td>${d.fecha_registro}</td>
-                    <td>
-                        <button class="small" onclick='edit(${JSON.stringify(d)})'>Editar</button>
-                        <button class="small" onclick="remove(${d.id})">Eliminar</button>
-                    </td>
-                </tr>
+            let fila = document.createElement("tr");
+
+            fila.innerHTML = `
+                <td>${d.id}</td>
+                <td>${d.nombre}</td>
+                <td>${d.tipo}</td>
+                <td>${d.estado}</td>
+                <td>${d.area}</td>
+                <td>${d.fecha_registro}</td>
+                <td>
+                    <button class="small btnEditar">Editar</button>
+                    <button class="small btnEliminar">Eliminar</button>
+                </td>
             `;
+
+            // 🔥 Eventos dinámicos (clave para celular)
+            fila.querySelector(".btnEditar").addEventListener("click", () => edit(d));
+            fila.querySelector(".btnEliminar").addEventListener("click", () => remove(d.id));
+
+            tabla.appendChild(fila);
         });
     });
 }
+
 
 // 🔹 Crear
 function create() {
@@ -44,7 +61,8 @@ function create() {
     });
 }
 
-// 🔹 Editar (llenar formulario)
+
+// 🔹 Editar
 function edit(d) {
     document.getElementById("id").value = d.id;
     document.getElementById("nombre").value = d.nombre;
@@ -53,9 +71,12 @@ function edit(d) {
     document.getElementById("area").value = d.area;
 }
 
+
 // 🔹 Actualizar
 function update() {
     let id = document.getElementById("id").value;
+
+    if (!id) return;
 
     fetch(`${base}/${id}`, {
         method: "PUT",
@@ -69,6 +90,7 @@ function update() {
     });
 }
 
+
 // 🔹 Eliminar
 function remove(id) {
     fetch(`${base}/${id}`, {
@@ -76,6 +98,7 @@ function remove(id) {
     })
     .then(() => getAll());
 }
+
 
 // 🔹 Obtener datos
 function getData() {
@@ -87,6 +110,7 @@ function getData() {
     };
 }
 
+
 // 🔹 Limpiar formulario
 function clear() {
     document.getElementById("id").value = "";
@@ -96,6 +120,8 @@ function clear() {
     document.getElementById("area").value = "";
 }
 
+
+// 🔹 Filtrar (mejorado)
 function filtrar() {
     let input = document.getElementById("buscador").value.toLowerCase();
     let filas = document.querySelectorAll("#tabla tr");
@@ -103,20 +129,10 @@ function filtrar() {
     filas.forEach(fila => {
         let columnas = fila.getElementsByTagName("td");
 
-        let nombre = columnas[1]?.textContent.toLowerCase() || "";
-        let tipo = columnas[2]?.textContent.toLowerCase() || "";
-        let estado = columnas[3]?.textContent.toLowerCase() || "";
-        let area = columnas[4]?.textContent.toLowerCase() || "";
+        let texto = Array.from(columnas)
+            .map(td => td.textContent.toLowerCase())
+            .join(" ");
 
-        if (
-            nombre.includes(input) ||
-            tipo.includes(input) ||
-            estado.includes(input) ||
-            area.includes(input)
-        ) {
-            fila.style.display = "";
-        } else {
-            fila.style.display = "none";
-        }
+        fila.style.display = texto.includes(input) ? "" : "none";
     });
 }
