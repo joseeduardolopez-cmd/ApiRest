@@ -1,64 +1,77 @@
-const base = "/devices";
+let devices = [];
 
-// 🔥 Cargar al iniciar (mejor que window.onload)
+// 🔥 Cargar al iniciar
 document.addEventListener("DOMContentLoaded", () => {
-    getAll();
+    loadData();
 
-    // Eventos botones (mobile friendly)
     document.getElementById("btnGuardar").addEventListener("click", create);
     document.getElementById("btnActualizar").addEventListener("click", update);
-
-    // Buscador en tiempo real
     document.getElementById("buscador").addEventListener("input", filtrar);
 });
 
 
-// 🔹 Obtener todos
-function getAll() {
-    fetch(base)
-    .then(r => r.json())
-    .then(data => {
-        let tabla = document.getElementById("tabla");
-        tabla.innerHTML = "";
+// 🔹 Cargar datos del navegador
+function loadData() {
+    let data = localStorage.getItem("devices");
+    devices = data ? JSON.parse(data) : [];
+    render();
+}
 
-        data.forEach(d => {
-            let fila = document.createElement("tr");
 
-            fila.innerHTML = `
-                <td>${d.id}</td>
-                <td>${d.nombre}</td>
-                <td>${d.tipo}</td>
-                <td>${d.estado}</td>
-                <td>${d.area}</td>
-                <td>${d.fecha_registro}</td>
-                <td>
-                    <button class="small btnEditar">Editar</button>
-                    <button class="small btnEliminar">Eliminar</button>
-                </td>
-            `;
+// 🔹 Guardar en navegador
+function saveData() {
+    localStorage.setItem("devices", JSON.stringify(devices));
+}
 
-            // 🔥 Eventos dinámicos (clave para celular)
-            fila.querySelector(".btnEditar").addEventListener("click", () => edit(d));
-            fila.querySelector(".btnEliminar").addEventListener("click", () => remove(d.id));
 
-            tabla.appendChild(fila);
-        });
+// 🔹 Mostrar tabla
+function render() {
+    let tabla = document.getElementById("tabla");
+    tabla.innerHTML = "";
+
+    devices.forEach(d => {
+        let fila = document.createElement("tr");
+
+        fila.innerHTML = `
+            <td>${d.id}</td>
+            <td>${d.nombre}</td>
+            <td>${d.tipo}</td>
+            <td>${d.estado}</td>
+            <td>${d.area}</td>
+            <td>${d.fecha}</td>
+            <td>
+                <button class="small btnEditar">Editar</button>
+                <button class="small btnEliminar">Eliminar</button>
+            </td>
+        `;
+
+        fila.querySelector(".btnEditar").addEventListener("click", () => edit(d));
+        fila.querySelector(".btnEliminar").addEventListener("click", () => remove(d.id));
+
+        tabla.appendChild(fila);
     });
 }
 
 
 // 🔹 Crear
 function create() {
-    fetch(base, {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(getData())
-    })
-    .then(r => r.json())
-    .then(() => {
-        clear();
-        getAll();
-    });
+    let data = getData();
+
+    if (!data.nombre) {
+        alert("Ponle nombre bro 😅");
+        return;
+    }
+
+    let nuevo = {
+        id: Date.now(),
+        ...data,
+        fecha: new Date().toLocaleString()
+    };
+
+    devices.push(nuevo);
+    saveData();
+    render();
+    clear();
 }
 
 
@@ -78,25 +91,23 @@ function update() {
 
     if (!id) return;
 
-    fetch(`${base}/${id}`, {
-        method: "PUT",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(getData())
-    })
-    .then(r => r.json())
-    .then(() => {
-        clear();
-        getAll();
-    });
+    let data = getData();
+
+    devices = devices.map(d => 
+        d.id == id ? { ...d, ...data } : d
+    );
+
+    saveData();
+    render();
+    clear();
 }
 
 
 // 🔹 Eliminar
 function remove(id) {
-    fetch(`${base}/${id}`, {
-        method: "DELETE"
-    })
-    .then(() => getAll());
+    devices = devices.filter(d => d.id !== id);
+    saveData();
+    render();
 }
 
 
@@ -111,7 +122,7 @@ function getData() {
 }
 
 
-// 🔹 Limpiar formulario
+// 🔹 Limpiar
 function clear() {
     document.getElementById("id").value = "";
     document.getElementById("nombre").value = "";
@@ -121,18 +132,13 @@ function clear() {
 }
 
 
-// 🔹 Filtrar (mejorado)
+// 🔹 Filtrar
 function filtrar() {
     let input = document.getElementById("buscador").value.toLowerCase();
     let filas = document.querySelectorAll("#tabla tr");
 
     filas.forEach(fila => {
-        let columnas = fila.getElementsByTagName("td");
-
-        let texto = Array.from(columnas)
-            .map(td => td.textContent.toLowerCase())
-            .join(" ");
-
+        let texto = fila.textContent.toLowerCase();
         fila.style.display = texto.includes(input) ? "" : "none";
     });
 }
